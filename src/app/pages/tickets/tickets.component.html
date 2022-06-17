@@ -1,0 +1,107 @@
+<div class="row">
+  <div class="col-md-6 col-sm-12">
+    <div id="ticket-form">
+      <div class="card">
+        <h5 class="card-header">Issue Ticket</h5>
+        <ng-container *ngIf="service.avaliableAppointments$ |async as apps">
+        <div class="card-body">
+          <span *ngIf="!apps.length" class="text-danger">no availble appointments. Please create new appointment first</span>
+          <form [formGroup]="form">
+              <div>
+                <select class="form-select" formControlName="appointmentId" placeholder="select appointment">
+                  <option [value]="null">select an apoointment</option>
+                  <option *ngFor="let app of apps" [value]="app.id">
+                    #Ref: {{app.id}} - DOCTOR: {{ app.doctor.name }}- Duratoin: {{app.duration}}
+                  </option>
+                </select>
+              </div>
+              <div class="">
+                <select class="form-select" formControlName="patientId" placeholder="select patient">
+                  <option [value]="null">select a patient</option>
+                  <option *ngFor="let p of service.patients$ |async" [value]="p.id">{{p.fullName}} ({{ p.username }})</option>
+                </select>
+              </div>
+            </form>
+          </div>
+        </ng-container>
+        <div class="card-footer">
+          <button class="btn btn-primary" (click)="submitTicket()" [disabled]="form.invalid">generate</button>
+          <button class="btn btn-light">reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-md-6 col-sm-12">
+
+    <div id="started" class="p-2 bg-light rounded">
+      <ng-container [ngTemplateOutlet]="ticketsList" [ngTemplateOutletContext]="{$implicit: service.startedTickets$ | async, title: 'Started', actionsTemp: startedListActions  }"></ng-container>    
+    </div>
+  </div>
+</div>
+
+  <div class="w-100 m-3"><hr></div>
+
+<div class="row">
+
+  <div class="col-md-6 col-sm-12">
+    <div class="p-2 bg-light rounded">
+      <ng-container [ngTemplateOutlet]="ticketsList" [ngTemplateOutletContext]="{$implicit: service.onHoldTickets$ | async, title: 'On-Hold', actionsTemp: holdListActions  }"></ng-container>    
+    </div>
+  </div>
+
+  <div class="col-md-6 col-sm-12">
+    <div class="p-2 bg-light rounded">
+      <ng-container [ngTemplateOutlet]="ticketsList" [ngTemplateOutletContext]="{$implicit: service.waitingTickets$ | async, title: 'Queue', actionsTemp: waitingListActions  }"></ng-container>    
+    </div>
+  </div>
+</div>
+
+
+<ng-template #ticketsList let-tickets let-title="title" let-actionsTemp="actionsTemp">
+  <div class="p-2 bg-light rounded">
+    <h6>{{ title }}</h6>
+    <table class="table table-sm table-borderless">
+      <thead>
+        <tr>
+          <th>ticket No#</th>
+          <th>doctor</th>
+          <th>patient</th>
+          <th>duration</th>
+          <th>#</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of tickets">
+          <th>{{t.id}}</th>
+          <td>{{t.appointment.doctor.name}}</td>
+          <td>{{t.patient.fullName}} ({{t.patient.gender}})</td>
+          <td>{{ t.appointment.duration }} minutes</td>
+          <td>
+            <ng-container [ngTemplateOutlet]="actionsTemp" [ngTemplateOutletContext]="{ $implicit: t }"></ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-template>
+
+<ng-template #waitingListActions let-ticket >
+  <div class="d-flex">
+    <button class="btn btn-sm btn-success" (click)="startTicket(ticket)">start</button>
+    <button class="btn btn-sm btn-danger" (click)="holdTicket(ticket)">on-hold</button>
+  </div>
+</ng-template>
+
+<ng-template #startedListActions let-ticket>
+  <div class="d-flex">
+    <button class="btn btn-sm btn-success" (click)="completeTicket(ticket)">DONE</button>
+  </div>
+</ng-template>
+
+<ng-template #holdListActions let-ticket>
+  <div class="d-flex">
+    <button class="btn btn-sm btn-success" (click)="queueTicket(ticket)">Queue</button>
+  </div>
+</ng-template>

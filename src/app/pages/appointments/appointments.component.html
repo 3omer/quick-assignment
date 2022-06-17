@@ -1,0 +1,56 @@
+<div class="bg-light p-2 rounded">
+  <table class="table table-sm table-borderless">
+    <thead>
+      <tr>
+        <th>No#</th>
+        <th>doctor</th>
+        <th>duration</th>
+        <th>#</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let fg of form.controls; let i=index" [formGroup]="fg">
+        <tr>
+          <th>
+            <input class="form-control" type="number" formControlName="id" />
+          </th>
+          <td>
+            <select class="form-select" formControlName="doctorId" placeholder="select a doctor">
+              <option [value]="null">select a doctor</option>
+              <option *ngFor="let d of service.doctors$ |async" [value]="d.id">{{ d.name }}</option>
+            </select>
+          <td>
+            <input type="number" class="form-control" placeholder="duration in minutes" formControlName="duration" />
+          </td>
+          <td>
+            <button class="btn btn-sm btn-danger" (click)="removeLine(i)">X</button>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+    <tfoot>
+      <ng-container [formGroup]="toAdd">
+        <tr>
+          <th>
+            <input class="form-control" type="number" formControlName="id" />
+          </th>
+          <td>
+            <select class="form-select" formControlName="doctorId" placeholder="select a doctor">
+              <option [ngValue]="null">select a doctor</option>
+              <option *ngFor="let d of service.doctors$ |async" [value]="d.id">{{ d.name }}</option>
+            </select>
+          </td>
+          <td>
+            <input type="number" class="form-control" placeholder="duration in minutes" formControlName="duration" />
+          </td>
+          <td>
+            <button class="btn btn-sm btn-primary" (click)="addLine()" [disabled]="toAdd.invalid">+</button>
+          </td>
+        </tr>
+      </ng-container>
+    </tfoot>
+  </table>
+  <div class="w-100 text-end">
+    <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">save</button>
+  </div>
+</div>
