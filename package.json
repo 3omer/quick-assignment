@@ -1,7 +1,7 @@
 {
-  "name": "angular.io-example",
+  "name": "quick-assignment-example",
   "version": "0.0.0",
-  "description": "Example project from an angular.io guide.",
+  "description": "Example project from an quick-assignment guide.",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -32,6 +32,7 @@
     "@angular/compiler-cli": "^14.0.0",
     "@types/jasmine": "~4.0.0",
     "@types/node": "^16.11.35",
+    "angular-cli-ghpages": "^1.0.0",
     "copyfiles": "^2.4.1",
     "jasmine-core": "~4.1.0",
     "jasmine-marbles": "~0.8.3",
